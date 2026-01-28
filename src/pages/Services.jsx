@@ -1,97 +1,67 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Icon } from '@iconify/react';
 import LiveButton from '../components/ui/LiveButton';
+import { getServices } from '../api/services';
 
 const Services = () => {
-  const services = [
-    {
-      id: 1,
-      title: "Classic Haircut",
-      description: "Traditional haircut with precision scissors and clippers, styled to your preference. Perfect for all hair types and textures.",
-      price: "$35",
-      duration: "30 min",
-      ageGroups: ["Teens", "Adults", "Seniors"],
-      popular: true,
-      includes: [
-        "Consultation",
-        "Hair wash",
-        "Precision cut",
-        "Style & finish"
-      ]
-    },
-    {
-      id: 2,
-      title: "Beard Trim & Shape",
-      description: "Professional beard shaping and trimming with hot towel treatment. Expert styling to enhance your facial features.",
-      price: "$25",
-      duration: "20 min",
-      ageGroups: ["Adults", "Seniors"],
-      includes: [
-        "Hot towel prep",
-        "Precision trimming",
-        "Shape & style",
-        "Hot towel finish"
-      ]
-    },
-    {
-      id: 3,
-      title: "Premium Grooming",
-      description: "Full service grooming including haircut, beard trim, and hot towel shave. The ultimate grooming experience.",
-      price: "$60",
-      duration: "60 min",
-      ageGroups: ["Adults", "Seniors"],
-      includes: [
-        "All Classic Haircut services",
-        "Beard trim & shape",
-        "Hot towel shave",
-        "Facial massage",
-        "Post-shave treatment"
-      ]
-    },
-    {
-      id: 4,
-      title: "Kids Haircut",
-      description: "Gentle haircut experience designed specifically for children aged 3-12. Patient and caring approach.",
-      price: "$20",
-      duration: "25 min",
-      ageGroups: ["Children"],
-      includes: [
-        "Child-friendly approach",
-        "Simple cut",
-        "Styling",
-        "Fun distraction"
-      ]
-    },
-    {
-      id: 5,
-      title: "Senior Care Package",
-      description: "Specialized service for our senior clients with extra care and attention. Gentle grooming with comfort in mind.",
-      price: "$30",
-      duration: "35 min",
-      ageGroups: ["Seniors"],
-      includes: [
-        "Extra gentle handling",
-        "Comfortable pace",
-        "Simple styling",
-        "Safety considerations"
-      ]
-    },
-    {
-      id: 6,
-      title: "Group Packages",
-      description: "Special rates for families or groups of 3 or more people. Perfect for family gatherings or special occasions.",
-      price: "From $30",
-      duration: "Varies",
-      ageGroups: ["All Ages"],
-      includes: [
-        "Family discounts",
-        "Multiple service options",
-        "Flexible timing",
-        "Convenience for all"
-      ]
+  const [services, setServices] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    fetchServices();
+  }, []);
+
+  const fetchServices = async () => {
+    try {
+      setLoading(true);
+      const data = await getServices();
+
+      // Transform data to match component structure
+      const transformedServices = data.map(service => ({
+        id: service.id,
+        title: service.name,
+        description: service.description,
+        price: `$${service.price}`,
+        duration: `${service.duration_minutes} min`,
+        ageGroups: service.age_groups || [],
+        popular: service.is_popular,
+        includes: service.includes || [],
+      }));
+
+      setServices(transformedServices);
+    } catch (err) {
+      console.error('Error fetching services:', err);
+      setError('Failed to load services. Please try again later.');
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
+
+  if (loading) {
+    return (
+      <div className="container mx-auto px-4 py-16">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading services...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="container mx-auto px-4 py-16">
+        <div className="text-center">
+          <p className="text-red-500 mb-4">{error}</p>
+          <button onClick={fetchServices} className="text-primary hover:underline">
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4 py-16">

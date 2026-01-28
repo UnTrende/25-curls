@@ -12,6 +12,7 @@ import Home from './pages/Home';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfService from './pages/TermsOfService';
 import Accessibility from './pages/Accessibility';
+import AdminLogin from './pages/AdminLogin';
 import AnimatedGradient from './components/AnimatedGradient';
 
 const App = () => {
@@ -31,6 +32,7 @@ const App = () => {
           <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/terms" element={<TermsOfService />} />
           <Route path="/accessibility" element={<Accessibility />} />
+          <Route path="/admin/login" element={<AdminLogin />} />
         </Routes>
       </main>
 

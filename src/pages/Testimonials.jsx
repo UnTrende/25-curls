@@ -1,75 +1,70 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Icon } from '@iconify/react';
+import { getApprovedTestimonials } from '../api/testimonials';
 
 const Testimonials = () => {
-  const testimonials = [
-    {
-      id: 1,
-      name: "Michael Rodriguez",
-      age: "34",
-      role: "Father of 2",
-      rating: 5,
-      text: "The convenience of having a professional barber at home is incredible. My teenage son and I both get our haircuts together now, and the barber adjusts his approach perfectly for both of us. Outstanding service!",
-      image: "https://randomuser.me/api/portraits/men/32.jpg",
-      date: "March 15, 2024",
-      service: "Premium Grooming"
-    },
-    {
-      id: 2,
-      name: "Robert Chen",
-      age: "67",
-      role: "Retired Teacher",
-      rating: 5,
-      text: "As a senior, it's difficult to get to the barbershop. Having this service come to my home is a game-changer. The barber was respectful, patient, and gave me exactly what I wanted. Highly recommend!",
-      image: "https://randomuser.me/api/portraits/men/67.jpg",
-      date: "April 2, 2024",
-      service: "Senior Care Package"
-    },
-    {
-      id: 3,
-      name: "James Wilson",
-      age: "24",
-      role: "College Student",
-      text: "Best grooming experience I've ever had. The barber was punctual, professional, and gave me the perfect cut. The fact that I didn't have to travel anywhere was just a bonus.",
-      rating: 5,
-      image: "https://randomuser.me/api/portraits/men/22.jpg",
-      date: "February 28, 2024",
-      service: "Classic Haircut"
-    },
-    {
-      id: 4,
-      name: "Sarah Johnson",
-      age: "31",
-      role: "Mother of 3",
-      text: "I booked the kids' haircut service for my two sons (ages 6 and 10). The barber was incredibly patient with them and made the experience fun. Both kids actually enjoyed their haircuts!",
-      rating: 5,
-      image: "https://randomuser.me/api/portraits/women/44.jpg",
-      date: "May 10, 2024",
-      service: "Kids Haircut"
-    },
-    {
-      id: 5,
-      name: "David Thompson",
-      age: "45",
-      role: "Business Executive",
-      text: "The quality matches any high-end barbershop, but with the convenience of being at home. The attention to detail is remarkable. I'm a loyal customer now!",
-      rating: 5,
-      image: "https://randomuser.me/api/portraits/men/41.jpg",
-      date: "January 18, 2024",
-      service: "Premium Grooming"
-    },
-    {
-      id: 6,
-      name: "Thomas Anderson",
-      age: "72",
-      role: "Retired Veteran",
-      text: "I've been going to barbershops for 50+ years, but I have mobility issues now. This service brings the same quality to my home. The barber respects my pace and takes time with everything. Excellent service!",
-      rating: 5,
-      image: "https://randomuser.me/api/portraits/men/86.jpg",
-      date: "June 5, 2024",
-      service: "Senior Care Package"
+  const [testimonials, setTestimonials] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    fetchTestimonials();
+  }, []);
+
+  const fetchTestimonials = async () => {
+    try {
+      setLoading(true);
+      const data = await getApprovedTestimonials();
+
+      // Transform data to match component structure
+      const transformedTestimonials = data.map(testimonial => ({
+        id: testimonial.id,
+        name: testimonial.customer_name,
+        age: testimonial.customer_age,
+        role: testimonial.customer_role,
+        rating: testimonial.rating,
+        text: testimonial.text,
+        image: testimonial.image_url,
+        date: new Date(testimonial.created_at).toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        }),
+        service: testimonial.service_name,
+      }));
+
+      setTestimonials(transformedTestimonials);
+    } catch (err) {
+      console.error('Error fetching testimonials:', err);
+      setError('Failed to load testimonials. Please try again later.');
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
+
+  if (loading) {
+    return (
+      <div className="container mx-auto px-4 py-16">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading testimonials...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="container mx-auto px-4 py-16">
+        <div className="text-center">
+          <p className="text-red-500 mb-4">{error}</p>
+          <button onClick={fetchTestimonials} className="text-primary hover:underline">
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   const stats = [
     { value: "98%", label: "Customer Satisfaction" },

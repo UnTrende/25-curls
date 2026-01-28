@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Icon } from '@iconify/react';
 import LiveButton from '../components/ui/LiveButton';
+import { getServices } from '../api/services';
+import { createBooking } from '../api/bookings';
 
 const Booking = () => {
   const [formData, setFormData] = useState({
@@ -15,14 +17,28 @@ const Booking = () => {
     notes: ''
   });
 
-  const services = [
-    { id: 'classic', name: 'Classic Haircut', duration: '30 min', price: '$35' },
-    { id: 'beard', name: 'Beard Trim & Shape', duration: '20 min', price: '$25' },
-    { id: 'premium', name: 'Premium Grooming', duration: '60 min', price: '$60' },
-    { id: 'kids', name: 'Kids Haircut', duration: '25 min', price: '$20' },
-    { id: 'senior', name: 'Senior Care Package', duration: '35 min', price: '$30' },
-    { id: 'group', name: 'Group Package', duration: 'Varies', price: 'From $30' }
-  ];
+  const [services, setServices] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(false);
+
+  useEffect(() => {
+    fetchServices();
+  }, []);
+
+  const fetchServices = async () => {
+    try {
+      setLoading(true);
+      const data = await getServices();
+      setServices(data);
+    } catch (err) {
+      console.error('Error fetching services:', err);
+      setError('Failed to load services');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const timeSlots = [
     '9:00 AM', '10:00 AM', '11:00 AM', '12:00 PM',
@@ -30,10 +46,10 @@ const Booking = () => {
   ];
 
   const ageGroups = [
-    { value: 'teens', label: 'Teens (13-19)' },
-    { value: 'adults', label: 'Adults (20-59)' },
-    { value: 'seniors', label: 'Seniors (60+)' },
-    { value: 'children', label: 'Children (3-12)' }
+    { value: 'Teens (13-19)', label: 'Teens (13-19)' },
+    { value: 'Adults (20-59)', label: 'Adults (20-59)' },
+    { value: 'Seniors (60+)', label: 'Seniors (60+)' },
+    { value: 'Children (3-12)', label: 'Children (3-12)' }
   ];
 
   const handleChange = (e) => {
@@ -41,27 +57,98 @@ const Booking = () => {
       ...formData,
       [e.target.name]: e.target.value
     });
+    setError(null);
+    setSuccess(false);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // In a real app, you would send this data to your backend
-    alert('Booking submitted successfully! We will contact you shortly to confirm your appointment.');
-    setFormData({
-      name: '',
-      email: '',
-      phone: '',
-      service: '',
-      date: '',
-      time: '',
-      address: '',
-      ageGroup: '',
-      notes: ''
-    });
+
+    try {
+      setSubmitting(true);
+      setError(null);
+
+      // Convert time to 24-hour format
+      const time24 = convertTo24Hour(formData.time);
+
+      await createBooking({
+        customer_name: formData.name,
+        customer_email: formData.email,
+        customer_phone: formData.phone,
+        service_id: formData.service,
+        booking_date: formData.date,
+        booking_time: time24,
+        address: formData.address,
+        age_group: formData.ageGroup,
+        notes: formData.notes,
+      });
+
+      setSuccess(true);
+      setFormData({
+        name: '',
+        email: '',
+        phone: '',
+        service: '',
+        date: '',
+        time: '',
+        address: '',
+        ageGroup: '',
+        notes: ''
+      });
+
+      // Scroll to top to show success message
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch (err) {
+      console.error('Error submitting booking:', err);
+      setError('Failed to submit booking. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const convertTo24Hour = (time12h) => {
+    const [time, modifier] = time12h.split(' ');
+    let [hours, minutes] = time.split(':');
+
+    if (hours === '12') {
+      hours = '00';
+    }
+
+    if (modifier === 'PM') {
+      hours = parseInt(hours, 10) + 12;
+    }
+
+    return `${hours}:${minutes || '00'}:00`;
   };
 
   return (
     <div className="container mx-auto px-4 py-16">
+      {/* Success Message */}
+      {success && (
+        <div className="mb-8 p-4 bg-green-500/10 border border-green-500/20 rounded-lg">
+          <div className="flex items-center gap-3">
+            <Icon icon="mdi:check-circle" className="text-green-500 text-2xl" />
+            <div>
+              <h3 className="font-semibold text-green-500">Booking Submitted Successfully!</h3>
+              <p className="text-sm text-muted-foreground">We will contact you shortly to confirm your appointment.</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Error Message */}
+      {error && (
+        <div className="mb-8 p-4 bg-red-500/10 border border-red-500/20 rounded-lg">
+          <div className="flex items-center gap-3">
+            <Icon icon="mdi:alert-circle" className="text-red-500 text-2xl" />
+            <div>
+              <h3 className="font-semibold text-red-500">Error</h3>
+              <p className="text-sm text-muted-foreground">{error}</p>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-heading font-bold text-white mb-6 uppercase tracking-wider">Book Your Appointment</h1>
@@ -240,6 +327,35 @@ const Booking = () => {
               </div>
 
               <div>
+                <label htmlFor="service" className="block text-sm font-medium text-muted-foreground mb-2">
+                  Select Service *
+                </label>
+                <div className="relative">
+                  <select
+                    id="service"
+                    name="service"
+                    value={formData.service}
+                    onChange={handleChange}
+                    required
+                    className="w-full pl-10 pr-4 py-3 bg-black border border-white/10 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-white font-sans transition-all appearance-none cursor-pointer"
+                  >
+                    <option value="">Choose a service...</option>
+                    {services.map((service) => (
+                      <option key={service.id} value={service.id}>
+                        {service.name} - ${service.price} ({service.duration_minutes} min)
+                      </option>
+                    ))}
+                  </select>
+                  <div className="absolute left-3 top-3.5 text-muted-foreground pointer-events-none">
+                    <Icon icon="mdi:scissors-cutting" width="20" height="20" />
+                  </div>
+                  <div className="absolute right-3 top-3.5 text-muted-foreground pointer-events-none">
+                    <Icon icon="mdi:chevron-down" width="20" height="20" />
+                  </div>
+                </div>
+              </div>
+
+              <div>
                 <label htmlFor="time" className="block text-sm font-medium text-muted-foreground mb-2">
                   Preferred Time *
                 </label>
@@ -279,12 +395,13 @@ const Booking = () => {
               </div>
             </div>
 
-            <div className="lg:col-span-2 mt-8 flex justify-center">
+            <div className="flex justify-center">
               <LiveButton
                 type="submit"
-                className="w-full max-w-md py-4 text-lg"
+                disabled={submitting}
+                className="px-8 py-4 text-lg"
               >
-                Confirm Booking
+                {submitting ? 'Submitting...' : 'Book Appointment'}
               </LiveButton>
             </div>
           </form>

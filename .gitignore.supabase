@@ -1,0 +1,6 @@
+# .env.local should not be committed to version control
+.env.local
+.env
+
+# Supabase local development
+.supabase/
