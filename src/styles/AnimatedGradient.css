@@ -1,0 +1,49 @@
+.animated-gradient {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  /* 
+    Warm Luxury Visual Halo Stack - Smooth Blend
+    1. #000000 (0-50%) - Deep Authority (Extended Black)
+    2. #1F1B18 (50-85%) - Smooth Transition to Espresso (35% Height Blend)
+    3. #D4AF37 (85-96%) - Soft Luxury Edge
+    4. #F5E6CA (96-100%) - Fresh Finish
+  */
+  background: linear-gradient(to bottom,
+      #000000 0%,
+      #000000 50%,
+      #1F1B18 85%,
+      #D4AF37 96%,
+      #F5E6CA 100%);
+  overflow: hidden;
+  z-index: -1;
+}
+
+/* Golden glow overlay at the bottom - Softened */
+.animated-gradient::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 45vh;
+  /* Taller glow for softness */
+  /* Golden/Warm glow with reduced opacity for softness */
+  background: radial-gradient(ellipse at bottom,
+      rgba(212, 175, 55, 0.15) 0%,
+      transparent 65%);
+  animation: subtle-pulse 6s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+@keyframes subtle-pulse {
+  0% {
+    opacity: 0.5;
+  }
+
+  100% {
+    opacity: 0.8;
+  }
+}
