@@ -2,6 +2,8 @@ node_modules/
 dist/
 .env
 .env.local
+.env.production
+.env.development
 .DS_Store
 coverage/
 .nyc_output/
@@ -18,3 +20,8 @@ out/
 public/uploads/
 *.zip
 package-lock.json
+yarn.lock
+__pycache__/
+*.pyc
+.env.test
+supabase/.env

@@ -1,9 +1,11 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
+import { useAuth } from '../hooks/useAuth.jsx';
 
 const ProtectedRoute = ({ children }) => {
     const { user, isAdmin, loading } = useAuth();
+
+    console.log('ProtectedRoute:', { user: user?.email, isAdmin, loading });
 
     if (loading) {
         return (
@@ -17,9 +19,11 @@ const ProtectedRoute = ({ children }) => {
     }
 
     if (!user || !isAdmin) {
+        console.log('ProtectedRoute: Access denied, redirecting to login');
         return <Navigate to="/admin/login" replace />;
     }
 
+    console.log('ProtectedRoute: Access granted');
     return children;
 };
 

@@ -7,7 +7,7 @@ import CTASection from '../components/CTASection';
 
 const Home = () => {
   return (
-    <div className="home-page">
+    <div className="home-page -mt-[var(--total-header-height)]">
       <HeroSection />
       <div className="container mx-auto px-4 py-16">
         <ServicesPreview />

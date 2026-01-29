@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Icon } from '@iconify/react';
-import { useAuth } from '../hooks/useAuth';
+import { useAuth } from '../hooks/useAuth.jsx';
 import LiveButton from '../components/ui/LiveButton';
 
 const AdminLogin = () => {
@@ -19,11 +19,20 @@ const AdminLogin = () => {
         setLoading(true);
 
         try {
-            await signIn(email, password);
+            console.log('Attempting login with:', email);
+            const result = await signIn(email, password);
+            console.log('Login successful, result:', result);
+            
+            // Give time for checkAdminRole to complete
+            console.log('Waiting for admin role check to complete...');
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+            console.log('Navigating to dashboard...');
             navigate('/admin/dashboard');
         } catch (err) {
             console.error('Login error:', err);
-            setError('Invalid email or password. Please try again.');
+            console.error('Error details:', err.message, err.status);
+            setError(err.message || 'Invalid email or password. Please try again.');
         } finally {
             setLoading(false);
         }

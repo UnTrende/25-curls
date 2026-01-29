@@ -1,79 +1,96 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Icon } from '@iconify/react';
+import { getPortfolioItems } from '../api/portfolio';
 
 const Portfolio = () => {
-  const portfolioCategories = [
+  const [portfolioItems, setPortfolioItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    fetchPortfolioItems();
+  }, []);
+
+  const fetchPortfolioItems = async () => {
+    try {
+      setLoading(true);
+      const data = await getPortfolioItems();
+      
+      if (data && data.length > 0) {
+        // Group items by category
+        const groupedItems = data.reduce((acc, item) => {
+          const category = item.category || 'general';
+          if (!acc[category]) {
+            acc[category] = [];
+          }
+          acc[category].push(item);
+          return acc;
+        }, {});
+
+        // Convert to array format for rendering
+        const portfolioCategories = Object.entries(groupedItems).map(([categoryName, items]) => ({
+          name: categoryName.charAt(0).toUpperCase() + categoryName.slice(1),
+          items: items.map(item => ({
+            id: item.id,
+            title: item.title,
+            description: item.description,
+            image: item.image_url,
+            category: item.category
+          }))
+        }));
+
+        setPortfolioItems(portfolioCategories);
+      } else {
+        // Use fallback data in demo mode
+        setPortfolioItems([]);
+      }
+    } catch (err) {
+      console.error('Error fetching portfolio items:', err);
+      // Don't show error in demo mode
+      if (import.meta.env.VITE_SUPABASE_URL && !import.meta.env.VITE_SUPABASE_URL.includes('placeholder')) {
+        setError('Failed to load portfolio items. Please try again later.');
+      }
+      setPortfolioItems([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="container mx-auto px-4 py-16">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading portfolio...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="container mx-auto px-4 py-16">
+        <div className="text-center">
+          <p className="text-red-500 mb-4">{error}</p>
+          <button onClick={fetchPortfolioItems} className="text-primary hover:underline">
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Fallback to static data if no items in database
+  const portfolioCategories = portfolioItems.length > 0 ? portfolioItems : [
     {
-      id: 1,
       name: "Haircuts",
       items: [
         {
           id: 101,
           title: "Classic Taper Fade",
           description: "Precision taper fade with scissor-over-comb technique",
-          image: "https://images.unsplash.com/photo-1596466596120-2a8e4b5d2c3a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
-          clientAge: "Adult Male",
-          technique: "Scissor & Clipper"
-        },
-        {
-          id: 102,
-          title: "Modern Pompadour",
-          description: "Styled pompadour with texture and volume",
-          image: "https://images.unsplash.com/photo-1577896851231-70ef18881754?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
-          clientAge: "Young Adult",
-          technique: "Blow Dry & Styling"
-        },
-        {
-          id: 103,
-          title: "Buzz Cut",
-          description: "Clean and sharp buzz cut at various lengths",
-          image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
-          clientAge: "Adult Male",
-          technique: "Clipper Only"
-        }
-      ]
-    },
-    {
-      id: 2,
-      name: "Beard Care",
-      items: [
-        {
-          id: 201,
-          title: "Full Beard Shape",
-          description: "Professional shaping and trimming of full beard",
-          image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
-          clientAge: "Adult Male",
-          technique: "Hot Towel & Scissors"
-        },
-        {
-          id: 202,
-          title: "Goatee Style",
-          description: "Defined goatee with precise lines",
-          image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
-          clientAge: "Adult Male",
-          technique: "Clipper & Razor"
-        }
-      ]
-    },
-    {
-      id: 3,
-      name: "Specialized Services",
-      items: [
-        {
-          id: 301,
-          title: "Senior Gentle Grooming",
-          description: "Extra care and attention for senior clients",
-          image: "https://images.unsplash.com/photo-1504593811423-6dd665756598?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
-          clientAge: "Senior Male",
-          technique: "Gentle Approach"
-        },
-        {
-          id: 302,
-          title: "Kids First Haircut",
-          description: "Patient and fun approach for first haircuts",
-          image: "https://images.unsplash.com/photo-1607601562442-b0e3ec27c7e8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
-          clientAge: "Child",
-          technique: "Child-Friendly"
+          image: "https://images.unsplash.com/photo-1596466596120-2a8e4b5d2c3a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+          category: "Haircuts"
         }
       ]
     }

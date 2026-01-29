@@ -39,6 +39,11 @@
 
     --radius: 0.5rem;
     --shimmer-width: 100px;
+    
+    /* Header height variables */
+    --header-height: 4rem;
+    --header-top-padding: 1.5rem;
+    --total-header-height: calc(var(--header-height) + var(--header-top-padding));
   }
 
   * {

@@ -10,7 +10,7 @@ const HeroSection = () => {
   const x1 = useTransform(scrollYProgress, [0, 1], [0, -50]);
 
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden">
+    <section className="relative min-h-screen flex items-center overflow-hidden pt-0">
       <div className="container mx-auto px-4 z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
           {/* Left Side: Typography */}

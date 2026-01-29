@@ -16,27 +16,35 @@ const Testimonials = () => {
       setLoading(true);
       const data = await getApprovedTestimonials();
 
-      // Transform data to match component structure
-      const transformedTestimonials = data.map(testimonial => ({
-        id: testimonial.id,
-        name: testimonial.customer_name,
-        age: testimonial.customer_age,
-        role: testimonial.customer_role,
-        rating: testimonial.rating,
-        text: testimonial.text,
-        image: testimonial.image_url,
-        date: new Date(testimonial.created_at).toLocaleDateString('en-US', {
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric'
-        }),
-        service: testimonial.service_name,
-      }));
+      if (data && data.length > 0) {
+        // Transform data to match component structure
+        const transformedTestimonials = data.map(testimonial => ({
+          id: testimonial.id,
+          name: testimonial.customer_name,
+          age: testimonial.customer_age,
+          role: testimonial.customer_role,
+          rating: testimonial.rating,
+          text: testimonial.text,
+          image: testimonial.image_url,
+          date: new Date(testimonial.created_at).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+          }),
+          service: testimonial.service_name,
+        }));
 
-      setTestimonials(transformedTestimonials);
+        setTestimonials(transformedTestimonials);
+      } else {
+        setTestimonials([]);
+      }
     } catch (err) {
       console.error('Error fetching testimonials:', err);
-      setError('Failed to load testimonials. Please try again later.');
+      setTestimonials([]);
+      // Only show error if not in demo mode
+      if (import.meta.env.VITE_SUPABASE_URL && !import.meta.env.VITE_SUPABASE_URL.includes('placeholder')) {
+        setError('Failed to load testimonials. Please try again later.');
+      }
     } finally {
       setLoading(false);
     }

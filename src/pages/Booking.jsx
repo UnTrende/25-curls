@@ -31,10 +31,14 @@ const Booking = () => {
     try {
       setLoading(true);
       const data = await getServices();
-      setServices(data);
+      setServices(data || []);
     } catch (err) {
       console.error('Error fetching services:', err);
-      setError('Failed to load services');
+      setServices([]);
+      // Only show error if not in demo mode
+      if (import.meta.env.VITE_SUPABASE_URL && !import.meta.env.VITE_SUPABASE_URL.includes('placeholder')) {
+        setError('Failed to load services');
+      }
     } finally {
       setLoading(false);
     }

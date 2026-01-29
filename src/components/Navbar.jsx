@@ -32,7 +32,7 @@ const Navbar = () => {
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ duration: 0.6, ease: "easeOut" }}
                 className={cn(
-                    "fixed top-6 left-0 right-0 z-50 flex justify-center px-4"
+                    "fixed top-0 left-0 right-0 z-50 flex justify-center px-4 pt-6"
                 )}
             >
                 <div className={cn(
@@ -98,7 +98,7 @@ const Navbar = () => {
                         initial={{ opacity: 0, y: -20, scale: 0.95 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: -20, scale: 0.95 }}
-                        className="fixed inset-x-4 top-24 z-40 bg-card/95 backdrop-blur-xl border border-primary/20 rounded-2xl p-6 shadow-2xl md:hidden overflow-hidden"
+                        className="fixed inset-x-4 top-[var(--total-header-height)] z-40 bg-card/95 backdrop-blur-xl border border-primary/20 rounded-2xl p-6 shadow-2xl md:hidden overflow-hidden"
                     >
                         <div className="flex flex-col space-y-4">
                             {navLinks.map((link) => (

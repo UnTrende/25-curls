@@ -18,22 +18,30 @@ const Services = () => {
       setLoading(true);
       const data = await getServices();
 
-      // Transform data to match component structure
-      const transformedServices = data.map(service => ({
-        id: service.id,
-        title: service.name,
-        description: service.description,
-        price: `$${service.price}`,
-        duration: `${service.duration_minutes} min`,
-        ageGroups: service.age_groups || [],
-        popular: service.is_popular,
-        includes: service.includes || [],
-      }));
+      if (data && data.length > 0) {
+        // Transform data to match component structure
+        const transformedServices = data.map(service => ({
+          id: service.id,
+          title: service.name,
+          description: service.description,
+          price: `$${service.price}`,
+          duration: `${service.duration_minutes} min`,
+          ageGroups: service.age_groups || [],
+          popular: service.is_popular,
+          includes: service.includes || [],
+        }));
 
-      setServices(transformedServices);
+        setServices(transformedServices);
+      } else {
+        setServices([]);
+      }
     } catch (err) {
       console.error('Error fetching services:', err);
-      setError('Failed to load services. Please try again later.');
+      setServices([]);
+      // Only show error if not in demo mode
+      if (import.meta.env.VITE_SUPABASE_URL && !import.meta.env.VITE_SUPABASE_URL.includes('placeholder')) {
+        setError('Failed to load services. Please try again later.');
+      }
     } finally {
       setLoading(false);
     }
