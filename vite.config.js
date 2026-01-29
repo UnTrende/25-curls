@@ -12,8 +12,5 @@ export default defineConfig({
     outDir: 'dist',
     sourcemap: true,
   },
-  base: './',
-  optimizeDeps: {
-    include: ['@headlessui/react', '@heroicons/react'],
-  },
+  base: '/',
 });
