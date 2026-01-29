@@ -15,6 +15,7 @@ import TermsOfService from './pages/TermsOfService';
 import Accessibility from './pages/Accessibility';
 import AdminLogin from './pages/AdminLogin';
 import AdminDashboard from './pages/AdminDashboard';
+import EnvDebug from './pages/EnvDebug';
 import ManageBookings from './pages/admin/ManageBookings';
 import ManageServices from './pages/admin/ManageServices';
 import ManageMessages from './pages/admin/ManageMessages';
@@ -46,6 +47,7 @@ const App = () => {
             <Route path="/terms" element={<TermsOfService />} />
             <Route path="/accessibility" element={<Accessibility />} />
             <Route path="/admin/login" element={<AdminLogin />} />
+            <Route path="/env-debug" element={<EnvDebug />} />
             <Route path="/admin/dashboard" element={
               <ProtectedRoute>
                 <AdminDashboard />
