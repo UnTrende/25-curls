@@ -1,9 +1,26 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Icon } from '@iconify/react';
+import { getSettings } from '../api/siteSettings';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
+  const [logoUrl, setLogoUrl] = useState(null);
+
+  useEffect(() => {
+    const fetchLogo = async () => {
+      try {
+        const settings = await getSettings();
+        const logoSetting = settings.find(s => s.key === 'logo_url');
+        if (logoSetting && logoSetting.value) {
+          setLogoUrl(logoSetting.value);
+        }
+      } catch (err) {
+        console.error("Failed to load logo in footer", err);
+      }
+    };
+    fetchLogo();
+  }, []);
 
   const quickLinks = [
     { name: 'Home', path: '/' },
@@ -28,12 +45,22 @@ const Footer = () => {
           {/* Company Info */}
           <div>
             <Link to="/" className="flex items-center space-x-2 mb-4 group">
-              <div className="bg-primary text-black p-2 rounded-lg group-hover:scale-110 transition-transform">
-                <Icon icon="mdi:mustache" width="24" height="24" />
-              </div>
-              <span className="text-xl font-heading font-bold uppercase tracking-wider text-white">
-                Elite<span className="text-primary">Cuts</span>
-              </span>
+              {logoUrl ? (
+                <img
+                  src={logoUrl}
+                  alt="Crown & Blade"
+                  className="h-10 w-auto object-contain group-hover:scale-105 transition-transform"
+                />
+              ) : (
+                <>
+                  <div className="bg-primary text-black p-2 rounded-lg group-hover:scale-110 transition-transform">
+                    <Icon icon="mdi:mustache" width="24" height="24" />
+                  </div>
+                  <span className="text-xl font-heading font-bold uppercase tracking-wider text-white">
+                    Elite<span className="text-primary">Cuts</span>
+                  </span>
+                </>
+              )}
             </Link>
             <p className="text-muted-foreground mb-4">
               Professional barber services delivered to your doorstep. Serving customers from 16 to 80 years old with premium grooming experiences.

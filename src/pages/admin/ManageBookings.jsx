@@ -214,7 +214,7 @@ const ManageBookings = () => {
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <div className="text-sm text-white">{booking.service?.name || 'N/A'}</div>
-                                            <div className="text-sm text-muted-foreground">${booking.service?.price || 'N/A'}</div>
+                                            <div className="text-sm text-muted-foreground">AED {booking.service?.price || 'N/A'}</div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <div className="text-sm text-white">{formatDate(booking.booking_date)}</div>

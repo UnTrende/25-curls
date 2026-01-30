@@ -3,11 +3,14 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useLocation } from 'react-router-dom';
 import { Icon } from '@iconify/react';
 import { cn } from '../lib/utils';
-import LiveButton from './ui/LiveButton';
+import { getSettings } from '../api/siteSettings';
+import Skeleton from './ui/Skeleton';
 
 const Navbar = () => {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [logoUrl, setLogoUrl] = useState(null);
+    const [loading, setLoading] = useState(true);
     const location = useLocation();
 
     useEffect(() => {
@@ -15,6 +18,23 @@ const Navbar = () => {
             setIsScrolled(window.scrollY > 20);
         };
         window.addEventListener('scroll', handleScroll);
+
+        // Fetch Logo
+        const fetchLogo = async () => {
+            try {
+                const settings = await getSettings();
+                const logoSetting = settings.find(s => s.key === 'logo_url');
+                if (logoSetting && logoSetting.value) {
+                    setLogoUrl(logoSetting.value);
+                }
+            } catch (err) {
+                console.error("Failed to load logo", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchLogo();
+
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
@@ -42,12 +62,24 @@ const Navbar = () => {
                 )}>
                     {/* Logo */}
                     <Link to="/" className="flex items-center gap-2 group shrink-0">
-                        <div className="w-8 h-8 rounded-full bg-brand-gradient flex items-center justify-center text-white group-hover:scale-110 transition-transform">
-                            <Icon icon="mdi:mustache" width="20" height="20" />
-                        </div>
-                        <span className="text-xl font-heading font-bold tracking-wide text-white uppercase">
-                            Elite<span className="text-primary">Cuts</span>
-                        </span>
+                        {loading ? (
+                            <Skeleton className="h-10 w-32 bg-white/10" />
+                        ) : logoUrl ? (
+                            <img
+                                src={logoUrl}
+                                alt="Crown & Blade"
+                                className="h-10 w-auto object-contain group-hover:scale-105 transition-transform"
+                            />
+                        ) : (
+                            <>
+                                <div className="w-8 h-8 rounded-full bg-brand-gradient flex items-center justify-center text-white group-hover:scale-110 transition-transform">
+                                    <Icon icon="mdi:mustache" width="20" height="20" />
+                                </div>
+                                <span className="text-xl font-heading font-bold tracking-wide text-white uppercase">
+                                    Elite<span className="text-primary">Cuts</span>
+                                </span>
+                            </>
+                        )}
                     </Link>
 
                     {/* Desktop Nav */}

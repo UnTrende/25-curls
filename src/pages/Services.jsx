@@ -24,7 +24,7 @@ const Services = () => {
           id: service.id,
           title: service.name,
           description: service.description,
-          price: `$${service.price}`,
+          price: `AED ${service.price}`,
           duration: `${service.duration_minutes} min`,
           ageGroups: service.age_groups || [],
           popular: service.is_popular,

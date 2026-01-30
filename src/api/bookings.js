@@ -11,7 +11,20 @@ export const createBooking = async (bookingData) => {
         .select()
         .single();
 
-    if (error) throw error;
+    if (error) {
+        // Check if error is due to unique constraint violation (slot already booked)
+        // PostgreSQL error code 23505 = unique_violation
+        if (error.code === '23505' && error.message.includes('idx_bookings_unique_timeslot')) {
+            const slotError = new Error('SLOT_UNAVAILABLE');
+            slotError.details = {
+                date: bookingData.booking_date,
+                time: bookingData.booking_time,
+                message: 'This time slot has just been booked by another customer. Please select a different time.'
+            };
+            throw slotError;
+        }
+        throw error;
+    }
     return data;
 };
 

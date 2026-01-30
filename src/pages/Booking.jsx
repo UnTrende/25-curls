@@ -104,7 +104,13 @@ const Booking = () => {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (err) {
       console.error('Error submitting booking:', err);
-      setError('Failed to submit booking. Please try again.');
+
+      // Handle specific error for slot unavailability (race condition)
+      if (err.message === 'SLOT_UNAVAILABLE') {
+        setError(err.details?.message || 'This time slot is no longer available. Please select a different time.');
+      } else {
+        setError('Failed to submit booking. Please try again.');
+      }
     } finally {
       setSubmitting(false);
     }
@@ -346,7 +352,7 @@ const Booking = () => {
                     <option value="">Choose a service...</option>
                     {services.map((service) => (
                       <option key={service.id} value={service.id}>
-                        {service.name} - ${service.price} ({service.duration_minutes} min)
+                        {service.name} - AED {service.price} ({service.duration_minutes} min)
                       </option>
                     ))}
                   </select>

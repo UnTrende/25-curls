@@ -8,7 +8,7 @@ const ServicesPreview = () => {
       id: 1,
       title: "Classic Haircut",
       description: "Traditional haircut with precision scissors and clippers, styled to your preference.",
-      price: "$35",
+      price: "AED 130",
       duration: "30 min",
       icon: "mdi:content-cut",
       popular: true
@@ -17,7 +17,7 @@ const ServicesPreview = () => {
       id: 2,
       title: "Beard Trim & Shape",
       description: "Professional beard shaping and trimming with hot towel treatment.",
-      price: "$25",
+      price: "AED 90",
       duration: "20 min",
       icon: "mdi:clock-outline"
     },
@@ -25,7 +25,7 @@ const ServicesPreview = () => {
       id: 3,
       title: "Premium Grooming",
       description: "Full service grooming including haircut, beard trim, and hot towel shave.",
-      price: "$60",
+      price: "AED 220",
       duration: "60 min",
       icon: "mdi:star"
     },
@@ -33,7 +33,7 @@ const ServicesPreview = () => {
       id: 4,
       title: "Group Packages",
       description: "Special rates for families or groups of 3 or more people.",
-      price: "From $30",
+      price: "From AED 110",
       duration: "Varies",
       icon: "mdi:account-group"
     }
@@ -59,7 +59,7 @@ const ServicesPreview = () => {
                 }`}
             >
               {service.popular && (
-                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                <div className="flex justify-center -mt-2 mb-4">
                   <span className="bg-brand-gradient text-white text-xs font-bold px-4 py-1 rounded-full shadow-lg tracking-wider uppercase">
                     Most Popular
                   </span>

@@ -1,46 +1,40 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Icon } from '@iconify/react';
+import { getApprovedTestimonials } from '../api/testimonials';
 
 const TestimonialsPreview = () => {
-  const testimonials = [
-    {
-      id: 1,
-      name: "Michael Rodriguez",
-      age: "34",
-      role: "Father of 2",
-      rating: 5,
-      text: "The convenience of having a professional barber at home is incredible. My sons and I all get our haircuts together now!",
-      image: "https://randomuser.me/api/portraits/men/32.jpg"
-    },
-    {
-      id: 2,
-      name: "Robert Chen",
-      age: "67",
-      role: "Retired Teacher",
-      rating: 5,
-      text: "As an older gentleman, it's difficult to get to the barbershop. Having this service come to my home is a game-changer.",
-      image: "https://randomuser.me/api/portraits/men/67.jpg"
-    },
-    {
-      id: 3,
-      name: "James Wilson",
-      age: "24",
-      role: "College Student",
-      text: "Best grooming experience I've ever had. The barber was punctual, professional, and gave me the perfect cut.",
-      rating: 5,
-      image: "https://randomuser.me/api/portraits/men/22.jpg"
-    },
-    {
-      id: 4,
-      name: "David Thompson",
-      age: "45",
-      role: "Business Executive",
-      text: "The quality matches any high-end barbershop, but with the convenience of being at home. Highly recommend!",
-      rating: 5,
-      image: "https://randomuser.me/api/portraits/men/41.jpg"
-    }
-  ];
+  const [testimonials, setTestimonials] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchTestimonials = async () => {
+      try {
+        setLoading(true);
+        const data = await getApprovedTestimonials();
+        
+        // Take only the first 4 testimonials for preview
+        const previewData = (data || []).slice(0, 4).map(testimonial => ({
+          id: testimonial.id,
+          name: testimonial.customer_name,
+          age: testimonial.customer_age,
+          role: testimonial.customer_role,
+          rating: testimonial.rating,
+          text: testimonial.text,
+          image: testimonial.image_url
+        }));
+        
+        setTestimonials(previewData);
+      } catch (err) {
+        console.error('Failed to load testimonials preview:', err);
+        setTestimonials([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchTestimonials();
+  }, []);
 
   return (
     <section className="mb-20">
@@ -51,33 +45,43 @@ const TestimonialsPreview = () => {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {testimonials.map((testimonial) => (
-          <div key={testimonial.id} className="bg-card p-6 rounded-xl shadow-lg border border-border">
-            <div className="flex items-center mb-4">
-              <div className="w-12 h-12 rounded-full overflow-hidden mr-4">
-                <img
-                  src={testimonial.image}
-                  alt={testimonial.name}
-                  className="w-full h-full object-cover"
-                />
+      {loading ? (
+        <div className="flex justify-center py-12">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+        </div>
+      ) : testimonials.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {testimonials.map((testimonial) => (
+            <div key={testimonial.id} className="bg-card p-6 rounded-xl shadow-lg border border-border">
+              <div className="flex items-center mb-4">
+                <div className="w-12 h-12 rounded-full overflow-hidden mr-4">
+                  <img
+                    src={testimonial.image}
+                    alt={testimonial.name}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-foreground">{testimonial.name}, {testimonial.age}</h3>
+                  <p className="text-muted-foreground text-sm">{testimonial.role}</p>
+                </div>
               </div>
-              <div>
-                <h3 className="font-semibold text-foreground">{testimonial.name}, {testimonial.age}</h3>
-                <p className="text-muted-foreground text-sm">{testimonial.role}</p>
+
+              <div className="flex mb-3">
+                {[...Array(testimonial.rating)].map((_, i) => (
+                  <Icon key={i} icon="mdi:star" className="h-5 w-5 text-primary" />
+                ))}
               </div>
-            </div>
 
-            <div className="flex mb-3">
-              {[...Array(testimonial.rating)].map((_, i) => (
-                <Icon key={i} icon="mdi:star" className="h-5 w-5 text-primary" />
-              ))}
+              <p className="text-accent italic">"{testimonial.text}"</p>
             </div>
-
-            <p className="text-accent italic">"{testimonial.text}"</p>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      ) : (
+        <div className="text-center py-12">
+          <p className="text-muted-foreground">No testimonials available yet.</p>
+        </div>
+      )}
 
       <div className="text-center mt-12">
         <Link

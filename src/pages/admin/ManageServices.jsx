@@ -125,7 +125,7 @@ const ManageServices = () => {
                             </div>
                             <p className="text-muted-foreground text-sm mb-4 line-clamp-3">{service.description}</p>
                             <div className="flex justify-between items-center pt-4 border-t border-white/10">
-                                <span className="text-primary font-semibold text-lg">${service.price}</span>
+                                <span className="text-primary font-semibold text-lg">AED {service.price}</span>
                                 <span className="text-muted-foreground text-sm">{service.duration} min</span>
                             </div>
                         </motion.div>

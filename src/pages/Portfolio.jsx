@@ -80,21 +80,65 @@ const Portfolio = () => {
     );
   }
 
-  // Fallback to static data if no items in database
-  const portfolioCategories = portfolioItems.length > 0 ? portfolioItems : [
-    {
-      name: "Haircuts",
-      items: [
-        {
-          id: 101,
-          title: "Classic Taper Fade",
-          description: "Precision taper fade with scissor-over-comb technique",
-          image: "https://images.unsplash.com/photo-1596466596120-2a8e4b5d2c3a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-          category: "Haircuts"
-        }
-      ]
-    }
-  ];
+  // Show empty state if no items in database
+  if (portfolioItems.length === 0) {
+    return (
+      <div className="container mx-auto px-4 py-16">
+        <div className="text-center mb-16">
+          <h1 className="text-4xl md:text-5xl font-heading font-bold text-white mb-6 uppercase tracking-wider">Our Portfolio</h1>
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto font-sans">
+            Showcase of our work across different age groups and grooming styles.
+            From classic cuts to specialized services, we cater to all grooming needs.
+          </p>
+        </div>
+        
+        <div className="max-w-2xl mx-auto text-center py-16">
+          <div className="bg-card/50 backdrop-blur-sm border border-primary/20 rounded-2xl p-12">
+            <Icon icon="mdi:image-off-outline" className="w-20 h-20 mx-auto mb-6 text-muted-foreground/50" />
+            <h2 className="text-2xl font-heading font-bold text-white mb-4">No Portfolio Items Yet</h2>
+            <p className="text-muted-foreground mb-6">
+              Our portfolio gallery is currently empty. Check back soon to see our amazing work!
+            </p>
+            <button 
+              onClick={fetchPortfolioItems}
+              className="px-6 py-3 bg-primary/10 hover:bg-primary/20 text-primary rounded-lg transition-colors font-medium"
+            >
+              Refresh Portfolio
+            </button>
+          </div>
+        </div>
+
+        <div className="mt-16 bg-card/50 backdrop-blur-sm border border-primary/20 rounded-2xl p-12 shadow-2xl">
+          <h2 className="text-3xl font-heading font-bold text-white mb-10 text-center uppercase tracking-widest">Our Approach</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+            <div className="text-center group">
+              <div className="bg-primary/10 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-primary/20 transition-colors">
+                <Icon icon="mdi:lightbulb-on" className="h-10 w-10 text-primary" />
+              </div>
+              <h3 className="text-xl font-heading font-bold text-white mb-3 uppercase">Age-Appropriate</h3>
+              <p className="text-muted-foreground font-sans text-sm">We adapt our approach based on the client's age, ensuring comfort and safety for all.</p>
+            </div>
+
+            <div className="text-center group">
+              <div className="bg-primary/10 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-primary/20 transition-colors">
+                <Icon icon="mdi:shield-check" className="h-10 w-10 text-primary" />
+              </div>
+              <h3 className="text-xl font-heading font-bold text-white mb-3 uppercase">Hygiene First</h3>
+              <p className="text-muted-foreground font-sans text-sm">All tools are sanitized between clients, and we maintain the highest cleanliness standards.</p>
+            </div>
+
+            <div className="text-center group">
+              <div className="bg-primary/10 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-primary/20 transition-colors">
+                <Icon icon="mdi:account-star" className="h-10 w-10 text-primary" />
+              </div>
+              <h3 className="text-xl font-heading font-bold text-white mb-3 uppercase">Personalized</h3>
+              <p className="text-muted-foreground font-sans text-sm">Every client receives a customized grooming experience based on their unique needs.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4 py-16">
@@ -107,8 +151,8 @@ const Portfolio = () => {
       </div>
 
       <div className="space-y-16">
-        {portfolioCategories.map((category) => (
-          <div key={category.id}>
+        {portfolioItems.map((category) => (
+          <div key={category.name}>
             <h2 className="text-3xl font-heading font-bold text-primary mb-8 text-center uppercase tracking-wide border-b border-primary/20 pb-4 inline-block mx-auto w-full max-w-xs">{category.name}</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {category.items.map((item) => (

@@ -1,37 +1,26 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { getPortfolioItems } from '../api/portfolio';
+import Skeleton from './ui/Skeleton';
 
 const PortfolioPreview = () => {
-  const portfolioItems = [
-    {
-      id: 1,
-      title: "Classic Cut",
-      description: "Precision haircut for the modern gentleman",
-      image: "https://images.unsplash.com/photo-1596466596120-2a8e4b5d2c3a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80",
-      category: "Haircuts",
-    },
-    {
-      id: 2,
-      title: "Beard Grooming",
-      description: "Professional beard shaping and styling",
-      image: "https://images.unsplash.com/photo-1577896851231-70ef18881754?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80",
-      category: "Beard Care",
-    },
-    {
-      id: 3,
-      title: "Premium Styling",
-      description: "Complete grooming experience",
-      image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80",
-      category: "Styling",
-    },
-    {
-      id: 4,
-      title: "Senior Grooming",
-      description: "Gentle care for mature clients",
-      image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80",
-      category: "Specialized",
-    }
-  ];
+  const [portfolioItems, setPortfolioItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchItems = async () => {
+      try {
+        const data = await getPortfolioItems();
+        // Take top 4 items
+        setPortfolioItems(data?.slice(0, 4) || []);
+      } catch (err) {
+        console.error('Failed to load portfolio preview:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchItems();
+  }, []);
 
   return (
     <section className="mb-20">
@@ -42,28 +31,43 @@ const PortfolioPreview = () => {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {portfolioItems.map((item) => (
-          <div key={item.id} className="group overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300">
-            <div className="relative overflow-hidden">
-              <img
-                src={item.image}
-                alt={item.title}
-                className="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              <div className="absolute bottom-0 left-0 right-0 p-4 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-                <h3 className="text-white font-semibold text-lg">{item.title}</h3>
-                <p className="text-primary text-sm">{item.category}</p>
+      {loading ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="rounded-xl overflow-hidden shadow-lg bg-card border border-white/5">
+              <Skeleton className="h-64 w-full bg-white/5" />
+              <div className="p-4 space-y-3">
+                <Skeleton className="h-6 w-3/4 bg-white/10" />
+                <Skeleton className="h-4 w-full bg-white/5" />
+                <Skeleton className="h-4 w-1/2 bg-white/5" />
               </div>
             </div>
-            <div className="p-4 bg-card border-x border-b border-white/5 group-hover:border-primary/30 transition-colors">
-              <h3 className="font-semibold text-white uppercase tracking-wider">{item.title}</h3>
-              <p className="text-muted-foreground text-sm font-sans">{item.description}</p>
+          ))}
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {portfolioItems.map((item) => (
+            <div key={item.id} className="group overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300">
+              <div className="relative overflow-hidden h-64">
+                <img
+                  src={item.image_url}
+                  alt={item.title}
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div className="absolute bottom-0 left-0 right-0 p-4 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                  <h3 className="text-white font-semibold text-lg">{item.title}</h3>
+                  <p className="text-primary text-sm uppercase">{item.category}</p>
+                </div>
+              </div>
+              <div className="p-4 bg-card border-x border-b border-white/5 group-hover:border-primary/30 transition-colors h-full">
+                <h3 className="font-semibold text-white uppercase tracking-wider mb-2">{item.title}</h3>
+                <p className="text-muted-foreground text-sm font-sans line-clamp-2">{item.description}</p>
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
 
       <div className="text-center mt-12">
         <Link

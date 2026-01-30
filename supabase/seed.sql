@@ -9,7 +9,7 @@ INSERT INTO services (name, description, price, duration_minutes, age_groups, in
 (
     'Classic Haircut',
     'Traditional haircut with precision scissors and clippers, styled to your preference. Perfect for all hair types and textures.',
-    35.00,
+    130.00,
     30,
     ARRAY['Teens', 'Adults', 'Seniors'],
     ARRAY['Consultation', 'Hair wash', 'Precision cut', 'Style & finish'],
@@ -20,7 +20,7 @@ INSERT INTO services (name, description, price, duration_minutes, age_groups, in
 (
     'Beard Trim & Shape',
     'Professional beard shaping and trimming with hot towel treatment. Expert styling to enhance your facial features.',
-    25.00,
+    90.00,
     20,
     ARRAY['Adults', 'Seniors'],
     ARRAY['Hot towel prep', 'Precision trimming', 'Shape & style', 'Hot towel finish'],
@@ -31,7 +31,7 @@ INSERT INTO services (name, description, price, duration_minutes, age_groups, in
 (
     'Premium Grooming',
     'Full service grooming including haircut, beard trim, and hot towel shave. The ultimate grooming experience.',
-    60.00,
+    220.00,
     60,
     ARRAY['Adults', 'Seniors'],
     ARRAY['All Classic Haircut services', 'Beard trim & shape', 'Hot towel shave', 'Facial massage', 'Post-shave treatment'],
@@ -42,7 +42,7 @@ INSERT INTO services (name, description, price, duration_minutes, age_groups, in
 (
     'Kids Haircut',
     'Gentle haircut experience designed specifically for children aged 3-12. Patient and caring approach.',
-    20.00,
+    75.00,
     25,
     ARRAY['Children'],
     ARRAY['Child-friendly approach', 'Simple cut', 'Styling', 'Fun distraction'],
@@ -53,7 +53,7 @@ INSERT INTO services (name, description, price, duration_minutes, age_groups, in
 (
     'Senior Care Package',
     'Specialized service for our senior clients with extra care and attention. Gentle grooming with comfort in mind.',
-    30.00,
+    110.00,
     35,
     ARRAY['Seniors'],
     ARRAY['Extra gentle handling', 'Comfortable pace', 'Simple styling', 'Safety considerations'],
@@ -64,7 +64,7 @@ INSERT INTO services (name, description, price, duration_minutes, age_groups, in
 (
     'Group Packages',
     'Special rates for families or groups of 3 or more people. Perfect for family gatherings or special occasions.',
-    30.00,
+    110.00,
     0,
     ARRAY['All Ages'],
     ARRAY['Family discounts', 'Multiple service options', 'Flexible timing', 'Convenience for all'],

@@ -22,8 +22,8 @@ serve(async (req) => {
 
     // Create a payment intent
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: amount, // Amount in cents
-      currency: 'usd',
+      amount: amount, // Amount in fils (AED subunit)
+      currency: 'aed',
       automatic_payment_methods: {
         enabled: true,
       },

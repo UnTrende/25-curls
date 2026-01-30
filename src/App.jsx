@@ -24,10 +24,31 @@ import ManagePortfolio from './pages/admin/ManagePortfolio';
 import ManageSettings from './pages/admin/ManageSettings';
 import ProtectedRoute from './components/ProtectedRoute';
 import { AuthProvider } from './hooks/useAuth.jsx';
+import { getSettings } from './api/siteSettings';
+import { useEffect } from 'react';
 
 const App = () => {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith('/admin');
+
+  useEffect(() => {
+    const updateFavicon = async () => {
+      try {
+        const settings = await getSettings();
+        const logoSetting = settings.find(s => s.key === 'logo_url');
+        if (logoSetting && logoSetting.value) {
+          const link = document.querySelector("link[rel*='icon']") || document.createElement('link');
+          link.type = 'image/png';
+          link.rel = 'icon';
+          link.href = logoSetting.value;
+          document.getElementsByTagName('head')[0].appendChild(link);
+        }
+      } catch (err) {
+        console.error("Failed to update favicon", err);
+      }
+    };
+    updateFavicon();
+  }, []);
 
   return (
     <AuthProvider>

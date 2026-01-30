@@ -68,7 +68,7 @@ serve(async (req) => {
                 </div>
                 <div class="detail-row">
                   <span class="detail-label">Price:</span>
-                  <span>$${booking.price}</span>
+                  <span>AED ${booking.price}</span>
                 </div>
                 <div class="detail-row">
                   <span class="detail-label">Booking ID:</span>

@@ -140,10 +140,10 @@ const BookingDetailsModal = ({ isOpen, onClose, booking }) => {
                                         </div>
                                         <div className="p-4 bg-white/5 rounded-lg border border-white/10">
                                             <div className="flex items-center gap-2 mb-2">
-                                                <Icon icon="mdi:currency-usd" className="text-primary" />
+                                                <Icon icon="mdi:currency" className="text-primary" />
                                                 <span className="text-xs font-medium text-muted-foreground uppercase">Price</span>
                                             </div>
-                                            <p className="text-white font-bold text-2xl">${booking.service?.price || 'N/A'}</p>
+                                            <p className="text-white font-bold text-2xl">AED {booking.service?.price || 'N/A'}</p>
                                             {booking.service?.duration && (
                                                 <p className="text-sm text-muted-foreground mt-1">Duration: {booking.service.duration} mins</p>
                                             )}
